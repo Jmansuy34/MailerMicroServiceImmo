@@ -1,0 +1,57 @@
+image: mcr.microsoft.com/dotnet/sdk:8.0
+
+stages:
+  - build
+  - test
+  - build_docker
+  - deploy
+
+variables:
+  DOCKER_IMAGE_TAG: latest
+  DOCKER_IMAGE_NAME: cocobeweb/ms-mailer-immoia
+
+build_application:
+  stage: build
+  before_script: 
+  - cd api
+  - 'dotnet restore'
+  script:
+    - 'dotnet build --no-restore'
+  artifacts:
+      paths:
+        - bin/
+  only:
+    - merge_requests
+
+unit_test:
+  stage: test
+  before_script:
+  - cd test
+  script:
+  - dotnet test
+  only:
+    - merge_requests
+
+format_test:
+  stage: test
+  before_script:
+  - dotnet tool install csharpier -g
+  - export PATH="$PATH:/root/.dotnet/tools"
+  script:
+  - dotnet csharpier --check .
+  only:
+    - merge_requests
+
+build_push_docker_image:
+  image: docker:dind
+  stage: build_docker
+  before_script:
+    - 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
+  script:
+    - 'docker build -t $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG ./app'
+    - 'docker push $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG'
+  only:
+    - production
+  services:
+    - docker:dind
+

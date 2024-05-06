@@ -1,0 +1,58 @@
+# Binaires générés
+bin/
+obj/
+
+# Dépendances NuGet
+**/packages/*
+!.nuget/
+
+
+# Fichiers de journalisation
+*.log
+logs/
+
+# Fichiers de sauvegarde de Visual Studio
+**/*.vscode/
+**/*.suo
+**/*.sln
+**/*.vcproj
+**/*.vcxproj
+
+# Fichiers de sauvegarde Rider
+.idea/
+
+# Fichiers de sauvegarde de Rider
+.Rider/
+
+# Fichiers de sauvegarde de VS Code
+.vscode/
+
+# Fichiers de sauvegarde
+**/*~
+**/*.bak
+
+# Fichiers de génération
+*_ReSharper.*
+
+# Fichiers de sauvegarde
+*.[Bb]ak
+
+# Fichiers de base de données
+*.db
+*.db3
+*.sqlite
+
+# Fichiers de solution Web
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Cache et fichiers temporaires
+[Oo]bj/
+[Bb]in/
+
+#sonarlint
+sonar-project.properties
+.sonarqube/
+.scannerwork/
