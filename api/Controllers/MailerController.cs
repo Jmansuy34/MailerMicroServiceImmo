@@ -10,13 +10,16 @@ namespace Mailer.Controllers
     public class MailerController : ControllerBase
     {
         private readonly MailerService _mailerService;
-
-        public MailerController(MailerService mailerService)
+        private readonly EmailTemplateService _emailTemplateService; 
+        public MailerController(
+            MailerService mailerService,
+            EmailTemplateService emailTemplateService
+        )
         {
             _mailerService = mailerService;
+            _emailTemplateService = emailTemplateService; // Initialisation du service de template
         }
 
-        // Endpoint pour envoyer un email simple
         [HttpPost("send")]
         public async Task<IActionResult> SendMail([FromBody] EmailRequest request)
         {
@@ -33,9 +36,16 @@ namespace Mailer.Controllers
 
             try
             {
-                var message =
-                    $"Nom: {request.LastName}\nPrénom: {request.FirstName}\nEmail: {request.Email}\nDescription: {request.Description}";
-                await _mailerService.SendMail(request.Subject, message, email, request.LastName);
+                // Charger le template d'email
+                var emailBody = await _emailTemplateService.GetSimpleEmailTemplate(
+                    request.LastName,
+                    request.FirstName,
+                    request.Email,
+                    request.Description
+                );
+
+                // Envoyer l'email en utilisant le template
+                await _mailerService.SendMail(request.Subject, emailBody, email, request.LastName);
                 return Ok(new { Message = "Mail envoyé avec succès" });
             }
             catch (Exception ex)

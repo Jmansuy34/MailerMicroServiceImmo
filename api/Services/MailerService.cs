@@ -23,7 +23,7 @@ namespace Mailer.Service
 
         public async Task SendMail(
             string subject,
-            string text,
+            string htmlContent, // Modifié pour accepter du HTML
             string receiverMail,
             string lastName
         )
@@ -32,29 +32,20 @@ namespace Mailer.Service
             emailMessage.From.Add(new MailboxAddress("IMMO-IA", _emailAddress));
             emailMessage.To.Add(new MailboxAddress(lastName, receiverMail));
             emailMessage.Subject = subject;
-            emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Text) { Text = text };
+            emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = htmlContent }; // Envoyer le contenu HTML
 
             using (var client = new SmtpClient())
             {
                 try
                 {
-                    // Utiliser STARTTLS pour le port 587
                     await client.ConnectAsync(
                         _host,
                         _port,
                         MailKit.Security.SecureSocketOptions.StartTls
                     );
-
                     await client.AuthenticateAsync(_emailAddress, _password);
                     await client.SendAsync(emailMessage);
                     await client.DisconnectAsync(true);
-                }
-                catch (SmtpCommandException ex)
-                {
-                    Console.WriteLine(
-                        $"Erreur dans l'envoi de l'email: {ex.Message}, Status Code: {ex.StatusCode}"
-                    );
-                    throw;
                 }
                 catch (Exception ex)
                 {
@@ -146,6 +137,15 @@ namespace Mailer.Service
                     throw;
                 }
             }
+        }
+
+        public async Task Send2FAEmail(string receiverEmail, string firstName, string code)
+        {
+            var subject = "Votre code de vérification";
+            var body =
+                $"Bonjour {firstName},\n\nVoici votre code de vérification : {code}. Ce code expirera dans 15 minutes.\n\nMerci.";
+
+            await SendMail(subject, body, receiverEmail, firstName);
         }
     }
 }

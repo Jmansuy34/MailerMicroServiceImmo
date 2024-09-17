@@ -35,4 +35,20 @@ public class EmailTemplateService
 
         return emailContent;
     }
+
+    public async Task<string> GetSimpleEmailTemplate(string lastName, string firstName, string email, string description)
+        {
+            // Chemin vers le template HTML
+            var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "Templates", "Emails", "SimpleEmailTemplate.html");
+            var templateContent = await File.ReadAllTextAsync(templatePath);
+
+            // Remplacer les placeholders par les valeurs dynamiques
+            var emailContent = templateContent
+                .Replace("{{LastName}}", lastName)
+                .Replace("{{FirstName}}", firstName)
+                .Replace("{{Email}}", email)
+                .Replace("{{Description}}", description);
+
+            return emailContent;
+        }
 }
