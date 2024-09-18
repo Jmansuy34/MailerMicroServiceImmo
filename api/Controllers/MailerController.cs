@@ -10,7 +10,8 @@ namespace Mailer.Controllers
     public class MailerController : ControllerBase
     {
         private readonly MailerService _mailerService;
-        private readonly EmailTemplateService _emailTemplateService; 
+        private readonly EmailTemplateService _emailTemplateService;
+
         public MailerController(
             MailerService mailerService,
             EmailTemplateService emailTemplateService
@@ -23,7 +24,8 @@ namespace Mailer.Controllers
         [HttpPost("send")]
         public async Task<IActionResult> SendMail([FromBody] EmailRequest request)
         {
-            var email = HttpContext.Items["Email"] as string;
+            // Extraire l'email de la requête au lieu du contexte
+            var email = request.Email;
 
             if (!ModelState.IsValid)
             {
@@ -31,7 +33,9 @@ namespace Mailer.Controllers
             }
             else if (string.IsNullOrEmpty(email))
             {
-                return BadRequest(new { Message = "Adresse email non trouvée dans le contexte." });
+                return BadRequest(
+                    new { Message = "Adresse email non trouvée dans le corps de la requête." }
+                );
             }
 
             try

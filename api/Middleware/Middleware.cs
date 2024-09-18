@@ -1,14 +1,17 @@
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.Extensions.Configuration;
 
 namespace Mailer.Middleware
 {
     public class TokenMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly IConfiguration _configuration; // Injection de la configuration
 
-        public TokenMiddleware(RequestDelegate next)
+        public TokenMiddleware(RequestDelegate next, IConfiguration configuration)
         {
             _next = next;
+            _configuration = configuration;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -16,13 +19,15 @@ namespace Mailer.Middleware
             // Extraire le jeton JWT depuis l'en-tête Authorization
             var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
 
-            // Si un jeton est présent, extraire l'email du jeton
+            // Si un jeton est présent, ajouter l'adresse email depuis la configuration
             if (!string.IsNullOrEmpty(token))
             {
                 context.Items["AuthToken"] = token;
-                var email = UncodeJwtToken(token);
 
-                // Si l'email est trouvé dans le jeton, l'ajouter au contexte
+                // Récupérer l'adresse email depuis la configuration
+                var email = _configuration["EmailSettings:EmailAddress"];
+
+                // Ajouter l'email récupéré au contexte
                 if (!string.IsNullOrEmpty(email))
                 {
                     context.Items["Email"] = email;
@@ -30,18 +35,6 @@ namespace Mailer.Middleware
             }
 
             await _next(context);
-        }
-
-        // Fonction pour décoder le jeton JWT et extraire l'email
-        public string UncodeJwtToken(string token)
-        {
-            var handler = new JwtSecurityTokenHandler();
-            var decodedToken = handler.ReadToken(token) as JwtSecurityToken;
-
-            // Récupérer la revendication (claim) "email" dans le jeton
-            var email = decodedToken?.Claims.FirstOrDefault(claim => claim.Type == "email")?.Value;
-
-            return email;
         }
     }
 }
