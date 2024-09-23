@@ -6,7 +6,7 @@ namespace Mailer.Middleware
     public class TokenMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly IConfiguration _configuration; // Injection de la configuration
+        private readonly IConfiguration _configuration; 
 
         public TokenMiddleware(RequestDelegate next, IConfiguration configuration)
         {

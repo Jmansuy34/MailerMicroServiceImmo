@@ -23,7 +23,7 @@ namespace Mailer.Service
 
         public async Task SendMail(
             string subject,
-            string htmlContent, // Modifié pour accepter du HTML
+            string htmlContent,
             string receiverMail,
             string lastName
         )

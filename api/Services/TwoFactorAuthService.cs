@@ -23,7 +23,7 @@ namespace Mailer.Service
 
             _cache.Set(email, new TwoFactorCacheEntry(hashedCode, _maxAttempts), cacheEntryOptions); // Associe l'email avec le hash du code et les tentatives restantes
 
-            return code; // Retourne le code en clair pour l'envoi par email
+            return code; 
         }
 
         private string Generate2FACode()

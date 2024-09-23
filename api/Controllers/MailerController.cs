@@ -18,7 +18,7 @@ namespace Mailer.Controllers
         )
         {
             _mailerService = mailerService;
-            _emailTemplateService = emailTemplateService; // Initialisation du service de template
+            _emailTemplateService = emailTemplateService; 
         }
 
         [HttpPost("send")]

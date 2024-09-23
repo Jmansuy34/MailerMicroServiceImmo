@@ -19,6 +19,7 @@ public class EmailTemplateService
         return emailContent;
     }
 
+    
      // Nouvelle méthode pour le template de réinitialisation de mot de passe
     public async Task<string> GetPasswordResetEmailTemplate(string firstName, string lastName, string resetLink, string companyName)
     {

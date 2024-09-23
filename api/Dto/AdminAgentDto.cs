@@ -17,9 +17,8 @@ namespace Mailer.DTOs
         [Required]
         public string Phone { get; set; }
 
-        public string? Agency { get; set; } // Peut être null
-
+        public string? Agency { get; set; } 
         [Required]
-        public string AuthToken { get; set; } // Ajouter authToken dans le modèle
+        public string AuthToken { get; set; } 
     }
 }
